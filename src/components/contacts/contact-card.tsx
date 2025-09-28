@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useActionState, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import {
@@ -10,6 +10,7 @@ import {
 import { CONTACT_STATUS_COLORS } from "@/components/contacts/constants";
 import { ContactForm, type ContactFormValues } from "@/components/contacts/contact-form";
 import { deleteContactAction, saveContactAction } from "@/actions/contacts";
+import { initialActionState } from "@/actions/types";
 import { SubmitButton } from "@/components/form/submit-button";
 import { initials, translateActivityType } from "@/lib/utils";
 import type { ContactWithRelations } from "@/lib/data";
@@ -35,6 +36,7 @@ type ContactCardProps = {
 
 export function ContactCard({ contact, teamMembers, tagsOptions }: ContactCardProps) {
   const [open, setOpen] = useState(false);
+  const [deleteState, deleteAction] = useActionState(deleteContactAction, initialActionState);
 
   const defaultValues: ContactFormValues = {
     id: contact.id,
@@ -61,6 +63,12 @@ export function ContactCard({ contact, teamMembers, tagsOptions }: ContactCardPr
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (deleteState.status === "success") {
+      handleClose();
+    }
+  }, [deleteState.status, handleClose]);
 
   return (
     <>
@@ -288,8 +296,13 @@ export function ContactCard({ contact, teamMembers, tagsOptions }: ContactCardPr
                         inline
                         onSuccess={handleClose}
                       />
-                      <form action={deleteContactAction} className="flex justify-end">
+                      <form action={deleteAction} className="flex justify-end">
                         <input type="hidden" name="id" value={contact.id} />
+                        {deleteState.status === "error" ? (
+                          <p className="mr-4 self-center text-xs text-rose-500">
+                            {deleteState.message ?? "No fue posible eliminar el contacto"}
+                          </p>
+                        ) : null}
                         <SubmitButton label="Eliminar" pendingLabel="Eliminando..." variant="danger" />
                       </form>
                     </section>

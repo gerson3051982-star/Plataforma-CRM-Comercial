@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, type KeyboardEvent, type MouseEvent } from "react";
+import { useActionState, useEffect, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import { OpportunityForm } from "@/components/opportunities/opportunity-form";
 import { saveOpportunityAction, deleteOpportunityAction } from "@/actions/opportunities";
+import { initialActionState } from "@/actions/types";
 import { SubmitButton } from "@/components/form/submit-button";
 import { formatCurrency, formatDate, translateOpportunityStatus, translateActivityType } from "@/lib/utils";
 import type { OpportunityWithRelations } from "@/lib/data";
@@ -46,6 +47,13 @@ type OpportunityCardProps = {
 export function OpportunityCard({ opportunity, companies, contacts, teamMembers }: OpportunityCardProps) {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
+  const [deleteState, deleteAction] = useActionState(deleteOpportunityAction, initialActionState);
+
+  useEffect(() => {
+    if (deleteState.status === "success") {
+      setEditing(false);
+    }
+  }, [deleteState.status]);
 
   const handleCardClick = (event: MouseEvent<HTMLArticleElement>) => {
     if (editing) return;
@@ -163,11 +171,16 @@ export function OpportunityCard({ opportunity, companies, contacts, teamMembers 
             onSuccess={() => setEditing(false)}
           />
           <form
-            action={deleteOpportunityAction}
+            action={deleteAction}
             className="flex justify-end"
             onClick={(event) => event.stopPropagation()}
           >
             <input type="hidden" name="id" value={opportunity.id} />
+            {deleteState.status === "error" ? (
+              <p className="mr-4 self-center text-xs text-rose-500">
+                {deleteState.message ?? "No fue posible eliminar la oportunidad"}
+              </p>
+            ) : null}
             <SubmitButton label="Eliminar" pendingLabel="Eliminando..." variant="danger" />
           </form>
         </div>

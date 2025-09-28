@@ -1,11 +1,12 @@
 "use client";
 
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useActionState, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Dialog, Transition } from "@headlessui/react";
 import { PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ActivityForm } from "@/components/activities/activity-form";
 import { saveActivityAction, deleteActivityAction } from "@/actions/activities";
+import { initialActionState } from "@/actions/types";
 import { SubmitButton } from "@/components/form/submit-button";
 import { formatDate, translateActivityType, translateActivityStatus } from "@/lib/utils";
 import type { ActivityWithRelations } from "@/lib/data";
@@ -31,6 +32,7 @@ type ActivityItemProps = {
 
 export function ActivityItem({ activity, contacts, opportunities, teamMembers }: ActivityItemProps) {
   const [open, setOpen] = useState(false);
+  const [deleteState, deleteAction] = useActionState(deleteActivityAction, initialActionState);
 
   const handleOpen = useCallback(() => {
     setOpen(true);
@@ -39,6 +41,12 @@ export function ActivityItem({ activity, contacts, opportunities, teamMembers }:
   const handleClose = useCallback(() => {
     setOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (deleteState.status === "success") {
+      handleClose();
+    }
+  }, [deleteState.status, handleClose]);
 
   return (
     <>
@@ -237,8 +245,13 @@ export function ActivityItem({ activity, contacts, opportunities, teamMembers }:
                           teamMemberId: activity.teamMemberId ?? undefined,
                         }}
                       />
-                      <form action={deleteActivityAction} className="flex justify-end">
+                      <form action={deleteAction} className="flex justify-end">
                         <input type="hidden" name="id" value={activity.id} />
+                        {deleteState.status === "error" ? (
+                          <p className="mr-4 self-center text-xs text-rose-500">
+                            {deleteState.message ?? "No fue posible eliminar la actividad"}
+                          </p>
+                        ) : null}
                         <SubmitButton label="Eliminar" pendingLabel="Eliminando..." variant="danger" />
                       </form>
                     </section>
