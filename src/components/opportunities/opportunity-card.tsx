@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useState, type KeyboardEvent, type MouseEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useState,
+  type KeyboardEventHandler,
+  type MouseEventHandler,
+} from "react";
 import { useRouter } from "next/navigation";
 import { OpportunityForm } from "@/components/opportunities/opportunity-form";
 import { saveOpportunityAction, deleteOpportunityAction } from "@/actions/opportunities";
@@ -55,7 +61,7 @@ export function OpportunityCard({ opportunity, companies, contacts, teamMembers 
     }
   }, [deleteState.status]);
 
-  const handleCardClick = (event: MouseEvent<HTMLElement>) => {
+  const handleCardClick: MouseEventHandler = (event) => {
     if (editing) return;
 
     const target = event.target as HTMLElement | null;
@@ -66,7 +72,7 @@ export function OpportunityCard({ opportunity, companies, contacts, teamMembers 
     router.push(`/opportunities/${opportunity.id}`);
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+  const handleKeyDown: KeyboardEventHandler = (event) => {
     if (editing) return;
     if (event.key !== "Enter" && event.key !== " ") return;
 
