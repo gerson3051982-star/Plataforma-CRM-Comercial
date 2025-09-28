@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "prisma db seed",
-    "create-team-users": "tsx prisma/backfill-team-users.ts"
+    "create-team-users": "tsx prisma/backfill-team-users.ts",
+    "migrate:vercel": "tsx prisma/migrate-to-vercel.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
