@@ -55,7 +55,7 @@ export function OpportunityCard({ opportunity, companies, contacts, teamMembers 
     }
   }, [deleteState.status]);
 
-  const handleCardClick = (event: MouseEvent<HTMLArticleElement>) => {
+  const handleCardClick = (event: MouseEvent<HTMLElement>) => {
     if (editing) return;
 
     const target = event.target as HTMLElement | null;
@@ -66,7 +66,7 @@ export function OpportunityCard({ opportunity, companies, contacts, teamMembers 
     router.push(`/opportunities/${opportunity.id}`);
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLArticleElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (editing) return;
     if (event.key !== "Enter" && event.key !== " ") return;
 
