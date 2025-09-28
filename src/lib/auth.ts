@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import NextAuth, { getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -20,7 +19,6 @@ function normalizeHeader(value: string | string[] | undefined) {
 }
 
 export const authOptions: NextAuthConfig = {
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
