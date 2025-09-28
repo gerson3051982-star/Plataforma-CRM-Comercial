@@ -3,6 +3,7 @@ import NextAuth, { getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { IncomingHttpHeaders } from "http";
 import { prisma } from "@/lib/prisma";
+import { env } from "@/lib/env";
 
 type NextAuthConfig = Parameters<typeof NextAuth>[2];
 type CredentialsInput = Record<"email" | "password", string> | undefined;
@@ -104,7 +105,7 @@ export const authOptions: NextAuthConfig = {
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.authSecret,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
