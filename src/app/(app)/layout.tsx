@@ -17,9 +17,15 @@ export default async function AppLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user || !session.user.email) {
     redirect("/login");
   }
+
+  const currentUser = session.user as typeof session.user & {
+    email: string;
+    role?: string | null;
+    teamMemberId?: number | null;
+  };
 
   const [tags, teamMembersRaw, companies, contactOptionsRaw, opportunityOptionsRaw] = await Promise.all([
     listTags(),
@@ -65,7 +71,7 @@ export default async function AppLayout({
 
   return (
     <AppShell
-      user={session.user}
+      user={currentUser}
       quickCreate={{
         contact: {
           teamMembers,
