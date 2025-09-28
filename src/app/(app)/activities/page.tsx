@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Session } from "next-auth";
 import { ActivityItem } from "@/components/activities/activity-item";
 import { listActivities, listContactOptions, listOpportunityOptions, listTeamMembers } from "@/lib/data";
 import { auth } from "@/lib/auth";
@@ -53,7 +54,7 @@ export default async function ActivitiesPage({ searchParams }: ActivitiesPagePro
   const page = parsePage(resolvedSearchParams);
   const session = await auth();
   const currentUser = session?.user
-    ? (session.user as typeof session.user & { teamMemberId?: number | null; role?: string | null })
+    ? (session.user as Session["user"] & { teamMemberId?: number | null; role?: string | null })
     : undefined;
   const isAdmin = currentUser?.role === "admin";
   const teamMemberId = isAdmin ? undefined : currentUser?.teamMemberId ?? undefined;

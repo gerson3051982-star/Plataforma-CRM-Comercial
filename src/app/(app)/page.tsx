@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Session } from "next-auth";
 import { getDashboardMetrics, listOpportunities } from "@/lib/data";
 import { auth } from "@/lib/auth";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -7,7 +8,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 export default async function Home() {
   const session = await auth();
   const currentUser = session?.user
-    ? (session.user as typeof session.user & { teamMemberId?: number | null; role?: string | null })
+    ? (session.user as Session["user"] & { teamMemberId?: number | null; role?: string | null })
     : undefined;
   const isAdmin = currentUser?.role === "admin";
   const teamMemberId = isAdmin ? undefined : currentUser?.teamMemberId ?? undefined;
