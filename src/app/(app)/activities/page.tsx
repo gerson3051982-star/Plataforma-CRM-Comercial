@@ -52,7 +52,9 @@ export default async function ActivitiesPage({ searchParams }: ActivitiesPagePro
   const resolvedSearchParams = ((await Promise.resolve(searchParams)) ?? {}) as RawSearchParams;
   const page = parsePage(resolvedSearchParams);
   const session = await auth();
-  const currentUser = session?.user as (typeof session.user & { teamMemberId?: number | null; role?: string | null }) | undefined;
+  const currentUser = session?.user
+    ? (session.user as typeof session.user & { teamMemberId?: number | null; role?: string | null })
+    : undefined;
   const isAdmin = currentUser?.role === "admin";
   const teamMemberId = isAdmin ? undefined : currentUser?.teamMemberId ?? undefined;
   const [{ activities, filters, pagination }, contacts, opportunities, team] = await Promise.all([

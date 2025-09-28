@@ -6,7 +6,9 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default async function Home() {
   const session = await auth();
-  const currentUser = session?.user as (typeof session.user & { teamMemberId?: number | null; role?: string | null }) | undefined;
+  const currentUser = session?.user
+    ? (session.user as typeof session.user & { teamMemberId?: number | null; role?: string | null })
+    : undefined;
   const isAdmin = currentUser?.role === "admin";
   const teamMemberId = isAdmin ? undefined : currentUser?.teamMemberId ?? undefined;
 
